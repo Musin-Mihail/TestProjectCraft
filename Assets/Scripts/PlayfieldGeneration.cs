@@ -6,11 +6,12 @@ public class PlayfieldGeneration : MonoBehaviour
     public Transform player;
     public Transform prefabTile;
     public Transform prefabcrystal;
-    public List<Transform> poolTiles;
+    List<Transform> poolTiles;
     List<Transform> poolСrystals;
     public Transform parentTiles;
     public Transform parentCrystals;
     List<Vector3> startPositions;
+    List<Vector3> sizeTilse;
     List<Transform> visibleTiles;
     Vector3 vector;
     Vector3 direction;
@@ -23,11 +24,16 @@ public class PlayfieldGeneration : MonoBehaviour
         poolTiles = new List<Transform>();
         visibleTiles = new List<Transform>();
         startPositions = new List<Vector3>();
+        sizeTilse = new List<Vector3>();
+        sizeTilse.Add(new Vector3(1, 1, 1));
+        sizeTilse.Add(new Vector3(2, 2, 2));
+        sizeTilse.Add(new Vector3(3, 3, 3));
         CreateStartPosition();
         NewGame();
     }
     void CreateStartPosition()
     {
+        startPositions.Clear();
         for (int z = 0; z < 3; z++)
         {
             for (int x = 0; x < 3; x++)
@@ -44,6 +50,7 @@ public class PlayfieldGeneration : MonoBehaviour
         player.position = new Vector3(1, 0, 1.5f) * gameDifficulty;
         PrimaryGeneration();
         StartCoroutine(DistanceСheck());
+
     }
     void PrimaryGeneration()
     {
@@ -52,7 +59,7 @@ public class PlayfieldGeneration : MonoBehaviour
             foreach (var vector3 in startPositions)
             {
                 Transform newTile = Instantiate(prefabTile, vector3, prefabTile.rotation, parentTiles);
-                newTile.localScale *= gameDifficulty;
+                newTile.localScale = sizeTilse[gameDifficulty - 1];
                 poolTiles.Add(newTile);
                 visibleTiles.Add(newTile);
             }
@@ -68,6 +75,7 @@ public class PlayfieldGeneration : MonoBehaviour
                         tile.gameObject.SetActive(true);
                         tile.position = vector3;
                         visibleTiles.Add(tile);
+                        tile.localScale = sizeTilse[gameDifficulty - 1];
                         break;
                     }
                 }
@@ -118,6 +126,7 @@ public class PlayfieldGeneration : MonoBehaviour
                 tile.position = vector;
                 tile.gameObject.SetActive(true);
                 visibleTiles.Add(tile);
+                tile.localScale = sizeTilse[gameDifficulty - 1];
                 return;
             }
         }
@@ -173,9 +182,12 @@ public class PlayfieldGeneration : MonoBehaviour
     {
         foreach (var tile in poolTiles)
         {
-            if (Vector3.Distance(tile.position, player.position) < 0.72f * gameDifficulty)
+            if (tile.gameObject.activeSelf)
             {
-                return true;
+                if (Vector3.Distance(tile.position, player.position) < 0.72f * gameDifficulty)
+                {
+                    return true;
+                }
             }
         }
         return false;
@@ -194,5 +206,11 @@ public class PlayfieldGeneration : MonoBehaviour
             }
         }
         return false;
+    }
+    public void ChangeGameDifficulty(int value)
+    {
+        gameDifficulty = value;
+        CreateStartPosition();
+        RestartGame();
     }
 }
