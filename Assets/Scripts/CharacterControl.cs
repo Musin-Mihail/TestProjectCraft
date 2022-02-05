@@ -22,29 +22,12 @@ public class CharacterControl : MonoBehaviour
         }
         else
         {
-            bool onTiles = false;
-            foreach (var tile in playfield.poolTiles)
-            {
-                if (Vector3.Distance(tile.position, player.position) < 0.7f)
-                {
-                    onTiles = true;
-                    break;
-                }
-            }
+            bool onTiles = playfield.CheckingDistanceToTiles();
             if (onTiles == false)
             {
                 Losing();
             }
-            foreach (var crystal in playfield.Сrystals)
-            {
-                if (crystal.gameObject.activeSelf)
-                {
-                    if (Vector3.Distance(crystal.position, player.position) < 1.1f)
-                    {
-                        crystal.gameObject.SetActive(false);
-                    }
-                }
-            }
+            playfield.CheckingDistanceToCrystals();
             if (Input.GetMouseButtonDown(0))
             {
                 if (direction == Vector3.right)
@@ -61,7 +44,9 @@ public class CharacterControl : MonoBehaviour
     }
     void Losing()
     {
-        player.GetChild(1).GetComponent<SpriteRenderer>().material.color = Color.red;
-        Time.timeScale = 0;
+        move = false;
+        direction = Vector3.forward;
+        player.position = new Vector3(1, 0, 1.5f);
+        playfield.RestartGame();
     }
 }
