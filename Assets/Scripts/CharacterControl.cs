@@ -3,11 +3,13 @@ public class CharacterControl : MonoBehaviour
 {
     Vector3 direction;
     public Transform player;
-    float speed = 2;
+    float speed = 3;
     bool move = false;
-    public PlayfieldGeneration playfield;
+    PlayfieldGeneration playfield;
+    UIController uIController;
     void Start()
     {
+        uIController = GetComponent<UIController>();
         playfield = GetComponent<PlayfieldGeneration>();
         direction = Vector3.forward;
     }
@@ -27,7 +29,11 @@ public class CharacterControl : MonoBehaviour
             {
                 Losing();
             }
-            playfield.CheckingDistanceToCrystals();
+            bool collectedCrystal = playfield.CheckingDistanceToCrystals();
+            if (collectedCrystal)
+            {
+                uIController.AddOnePoint();
+            }
             if (Input.GetMouseButtonDown(0))
             {
                 if (direction == Vector3.right)
@@ -46,7 +52,7 @@ public class CharacterControl : MonoBehaviour
     {
         move = false;
         direction = Vector3.forward;
-        player.position = new Vector3(1, 0, 1.5f);
+        uIController.GameOver();
         playfield.RestartGame();
     }
 }
