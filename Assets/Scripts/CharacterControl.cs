@@ -4,11 +4,10 @@ public class CharacterControl : MonoBehaviour
     Vector3 direction;
     public Transform player;
     float speed = 3;
-    public bool move = false;
+    bool move = false;
     PlayfieldGeneration playfield;
     UIController uIController;
-    public float timeScale;
-    public GameObject test;
+    public GameObject GameDifficultyButton;
     void Start()
     {
         uIController = GetComponent<UIController>();
@@ -17,7 +16,6 @@ public class CharacterControl : MonoBehaviour
     }
     void Update()
     {
-        timeScale = Time.timeScale;
         if (Time.timeScale == 1)
         {
             if (move == false)
@@ -55,7 +53,7 @@ public class CharacterControl : MonoBehaviour
                 player.position += direction * speed * Time.deltaTime;
             }
         }
-        else if (test.activeSelf == false)
+        else if (GameDifficultyButton.activeSelf == false)
         {
             Time.timeScale = 1;
         }

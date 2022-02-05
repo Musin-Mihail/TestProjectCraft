@@ -389,9 +389,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 100
+  m_SortingLayerID: -321711385
+  m_SortingLayer: 1
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: a3aeab3c4ecc3d04cbe4c2ea059e130d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -1204,9 +1204,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1186854977}
   prefabTile: {fileID: 8813365133581437376, guid: d1c2fe10d6ac7954180f6caa7f0fa4e4, type: 3}
-  prefabcrystal: {fileID: 392505811402524694, guid: 8e6025b59a96855498e4c7ddc4d36359, type: 3}
+  prefabcrystal: {fileID: 954716296416591251, guid: d26843054c7b17a489855b6649b50635, type: 3}
   parentTiles: {fileID: 1589262148}
   parentCrystals: {fileID: 399181181}
+  visibleTiles: []
+  layerSprite: 0
 --- !u!4 &1394636960
 Transform:
   m_ObjectHideFlags: 0
@@ -1234,9 +1236,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1186854977}
-  move: 0
-  timeScale: 0
-  test: {fileID: 1473712436}
+  GameDifficultyButton: {fileID: 1473712436}
 --- !u!114 &1394636962
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1320,9 +1320,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 99
+  m_SortingLayerID: -321711385
+  m_SortingLayer: 1
+  m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 0.27058825}
   m_FlipX: 0

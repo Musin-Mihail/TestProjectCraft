@@ -12,17 +12,20 @@ public class PlayfieldGeneration : MonoBehaviour
     public Transform parentCrystals;
     List<Vector3> startPositions;
     List<Vector3> sizeTilse;
-    List<Transform> visibleTiles;
+    public List<Transform> visibleTiles;
+    List<IEnumerator> IEnumerators;
     Vector3 vector;
     Vector3 direction;
     int numberDirect;
     int crystalCoefficient;
-    int gameDifficulty = 1;
+    int gameDifficulty = 3;
+    public int layerSprite = 0;
     void Start()
     {
         poolСrystals = new List<Transform>();
         poolTiles = new List<Transform>();
         visibleTiles = new List<Transform>();
+        IEnumerators = new List<IEnumerator>();
         startPositions = new List<Vector3>();
         sizeTilse = new List<Vector3>();
         sizeTilse.Add(new Vector3(1, 1, 1));
@@ -50,7 +53,6 @@ public class PlayfieldGeneration : MonoBehaviour
         player.position = new Vector3(1, 0, 1.5f) * gameDifficulty;
         PrimaryGeneration();
         StartCoroutine(DistanceСheck());
-
     }
     void PrimaryGeneration()
     {
@@ -72,14 +74,19 @@ public class PlayfieldGeneration : MonoBehaviour
                 {
                     if (tile.gameObject.activeSelf == false)
                     {
+                        tile.localScale = sizeTilse[gameDifficulty - 1];
                         tile.gameObject.SetActive(true);
                         tile.position = vector3;
                         visibleTiles.Add(tile);
-                        tile.localScale = sizeTilse[gameDifficulty - 1];
                         break;
                     }
                 }
             }
+
+        }
+        for (int i = 0; i < visibleTiles[visibleTiles.Count - 1].childCount; i++)
+        {
+            visibleTiles[visibleTiles.Count - 1].GetChild(i).GetComponent<SpriteRenderer>().sortingOrder = 0;
         }
     }
     IEnumerator DistanceСheck()
@@ -106,19 +113,21 @@ public class PlayfieldGeneration : MonoBehaviour
             {
                 direction = Vector3.forward * gameDifficulty;
                 numberDirect++;
+                layerSprite--;
             }
             else
             {
                 direction = Vector3.right * gameDifficulty;
+                layerSprite++;
             }
         }
         else
         {
             numberDirect = 0;
             direction = Vector3.right * gameDifficulty;
+            layerSprite++;
         }
         vector = visibleTiles[visibleTiles.Count - 1].position + direction;
-        AddСrystal(vector);
         foreach (var tile in poolTiles)
         {
             if (tile.gameObject.activeSelf == false)
@@ -127,13 +136,30 @@ public class PlayfieldGeneration : MonoBehaviour
                 tile.gameObject.SetActive(true);
                 visibleTiles.Add(tile);
                 tile.localScale = sizeTilse[gameDifficulty - 1];
+                for (int i = 0; i < tile.childCount; i++)
+                {
+                    tile.GetChild(i).GetComponent<SpriteRenderer>().sortingOrder = layerSprite;
+                }
+
+                var moveTile2 = MoveTileAdd(tile);
+                StartCoroutine(moveTile2);
+                IEnumerators.Add(moveTile2);
                 return;
             }
         }
+
         Transform newTile = Instantiate(prefabTile, vector, prefabTile.rotation, parentTiles);
-        newTile.localScale *= gameDifficulty;
+        newTile.localScale = sizeTilse[gameDifficulty - 1];
         poolTiles.Add(newTile);
         visibleTiles.Add(newTile);
+        for (int i = 0; i < newTile.childCount; i++)
+        {
+            newTile.GetChild(i).GetComponent<SpriteRenderer>().sortingOrder = layerSprite;
+        }
+
+        var moveTile = MoveTileAdd(newTile);
+        StartCoroutine(moveTile);
+        IEnumerators.Add(moveTile);
     }
     void AddСrystal(Vector3 newVector)
     {
@@ -161,19 +187,53 @@ public class PlayfieldGeneration : MonoBehaviour
     }
     void RemoveTile()
     {
-        visibleTiles[0].gameObject.SetActive(false);
+        var moveTile = MoveTileRemove(visibleTiles[0]);
+        StartCoroutine(moveTile);
+        IEnumerators.Add(moveTile);
         visibleTiles.RemoveAt(0);
+    }
+    IEnumerator MoveTileAdd(Transform tile)
+    {
+        Vector3 finishVector = tile.position;
+        finishVector.y = 0;
+        tile.position = finishVector + Vector3.down * 4;
+        while (tile.position != finishVector)
+        {
+            tile.position = Vector3.MoveTowards(tile.position, finishVector, 0.04f);
+            yield return new WaitForSeconds(0.01f);
+        }
+        AddСrystal(tile.position);
+    }
+    IEnumerator MoveTileRemove(Transform tile)
+    {
+        Vector3 newVector = tile.position + Vector3.down * 4;
+        while (tile.position != newVector)
+        {
+            tile.position = Vector3.MoveTowards(tile.position, newVector, 0.04f);
+            yield return new WaitForSeconds(0.01f);
+        }
+        tile.gameObject.SetActive(false);
     }
     public void RestartGame()
     {
         foreach (var tile in poolTiles)
         {
             tile.gameObject.SetActive(false);
+            for (int i = 0; i < tile.childCount; i++)
+            {
+                tile.GetChild(i).GetComponent<SpriteRenderer>().sortingOrder = 1;
+            }
         }
         foreach (var crystal in poolСrystals)
         {
             crystal.gameObject.SetActive(false);
         }
+        foreach (var item in IEnumerators)
+        {
+            StopCoroutine(item);
+        }
+        layerSprite = 0;
+        IEnumerators.Clear();
         visibleTiles.Clear();
         crystalCoefficient = 0;
         NewGame();

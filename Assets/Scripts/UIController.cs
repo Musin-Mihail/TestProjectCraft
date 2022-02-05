@@ -21,9 +21,6 @@ public class UIController : MonoBehaviour
     public void StartGame()
     {
         FirstText.SetActive(false);
-        GameDifficulty.SetActive(false);
-        collectedCrystals = 0;
-        collectedCrystalsText.text = collectedCrystals.ToString();
     }
     public void ChangeGameDifficulty()
     {
