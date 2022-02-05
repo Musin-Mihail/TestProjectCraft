@@ -12,14 +12,14 @@ public class PlayfieldGeneration : MonoBehaviour
     public Transform parentCrystals;
     List<Vector3> startPositions;
     List<Vector3> sizeTilse;
-    public List<Transform> visibleTiles;
+    List<Transform> visibleTiles;
     List<IEnumerator> IEnumerators;
     Vector3 vector;
     Vector3 direction;
     int numberDirect;
     int crystalCoefficient;
     int gameDifficulty = 3;
-    public int layerSprite = 0;
+    int layerSprite = 0;
     void Start()
     {
         poolСrystals = new List<Transform>();
@@ -140,14 +140,12 @@ public class PlayfieldGeneration : MonoBehaviour
                 {
                     tile.GetChild(i).GetComponent<SpriteRenderer>().sortingOrder = layerSprite;
                 }
-
                 var moveTile2 = MoveTileAdd(tile);
                 StartCoroutine(moveTile2);
                 IEnumerators.Add(moveTile2);
                 return;
             }
         }
-
         Transform newTile = Instantiate(prefabTile, vector, prefabTile.rotation, parentTiles);
         newTile.localScale = sizeTilse[gameDifficulty - 1];
         poolTiles.Add(newTile);
@@ -156,7 +154,6 @@ public class PlayfieldGeneration : MonoBehaviour
         {
             newTile.GetChild(i).GetComponent<SpriteRenderer>().sortingOrder = layerSprite;
         }
-
         var moveTile = MoveTileAdd(newTile);
         StartCoroutine(moveTile);
         IEnumerators.Add(moveTile);

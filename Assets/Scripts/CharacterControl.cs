@@ -33,7 +33,6 @@ public class CharacterControl : MonoBehaviour
                 {
                     NewGame();
                 }
-
                 bool collectedCrystal = playfield.CheckingDistanceToCrystals();
                 if (collectedCrystal)
                 {
