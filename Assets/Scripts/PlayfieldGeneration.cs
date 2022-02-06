@@ -4,8 +4,8 @@ using UnityEngine;
 public class PlayfieldGeneration : MonoBehaviour
 {
     public Transform player;
-    public Transform prefabTile;
-    public Transform prefabcrystal;
+    Transform prefabTile;
+    Transform prefabcrystal;
     List<Transform> poolTiles;
     List<Transform> poolСrystals;
     public Transform parentTiles;
@@ -22,6 +22,8 @@ public class PlayfieldGeneration : MonoBehaviour
     int layerSprite = 0;
     void Start()
     {
+        prefabTile = Resources.Load<Transform>("Tile");
+        prefabcrystal = Resources.Load<Transform>("Crystal");
         poolСrystals = new List<Transform>();
         poolTiles = new List<Transform>();
         visibleTiles = new List<Transform>();
@@ -84,10 +86,7 @@ public class PlayfieldGeneration : MonoBehaviour
             }
 
         }
-        for (int i = 0; i < visibleTiles[visibleTiles.Count - 1].childCount; i++)
-        {
-            visibleTiles[visibleTiles.Count - 1].GetChild(i).GetComponent<SpriteRenderer>().sortingOrder = 0;
-        }
+        ChangeOrderSorting(visibleTiles[visibleTiles.Count - 1], 0);
     }
     IEnumerator DistanceСheck()
     {
@@ -136,10 +135,7 @@ public class PlayfieldGeneration : MonoBehaviour
                 tile.gameObject.SetActive(true);
                 visibleTiles.Add(tile);
                 tile.localScale = sizeTilse[gameDifficulty - 1];
-                for (int i = 0; i < tile.childCount; i++)
-                {
-                    tile.GetChild(i).GetComponent<SpriteRenderer>().sortingOrder = layerSprite;
-                }
+                ChangeOrderSorting(tile, layerSprite);
                 var moveTile2 = MoveTileAdd(tile);
                 StartCoroutine(moveTile2);
                 IEnumerators.Add(moveTile2);
@@ -150,10 +146,7 @@ public class PlayfieldGeneration : MonoBehaviour
         newTile.localScale = sizeTilse[gameDifficulty - 1];
         poolTiles.Add(newTile);
         visibleTiles.Add(newTile);
-        for (int i = 0; i < newTile.childCount; i++)
-        {
-            newTile.GetChild(i).GetComponent<SpriteRenderer>().sortingOrder = layerSprite;
-        }
+        ChangeOrderSorting(newTile, layerSprite);
         var moveTile = MoveTileAdd(newTile);
         StartCoroutine(moveTile);
         IEnumerators.Add(moveTile);
@@ -216,10 +209,7 @@ public class PlayfieldGeneration : MonoBehaviour
         foreach (var tile in poolTiles)
         {
             tile.gameObject.SetActive(false);
-            for (int i = 0; i < tile.childCount; i++)
-            {
-                tile.GetChild(i).GetComponent<SpriteRenderer>().sortingOrder = 1;
-            }
+            ChangeOrderSorting(tile, 1);
         }
         foreach (var crystal in poolСrystals)
         {
@@ -269,5 +259,12 @@ public class PlayfieldGeneration : MonoBehaviour
         gameDifficulty = value;
         CreateStartPosition();
         RestartGame();
+    }
+    void ChangeOrderSorting(Transform tile, int layer)
+    {
+        for (int i = 0; i < tile.childCount; i++)
+        {
+            tile.GetChild(i).GetComponent<SpriteRenderer>().sortingOrder = layer;
+        }
     }
 }
