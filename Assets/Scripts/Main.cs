@@ -9,12 +9,14 @@ public class Main : MonoBehaviour
     // UI ui;
     void Start()
     {
+        player = new Player();
+        player.Initialization();
+        startPosition = player.SetPosition();
+        
         gameState = GetComponent<GameState>();
         playfield = GetComponent<Playfield>().ttt();
 
-        player = new Player();
-        player.player = FindObjectOfType<TagPlayer>().transform;
-        startPosition = player.player.position;
+        
         // ui = new UI();
         playfield.gameState = gameState;
         playfield.prefabTile = Resources.Load<Transform>("Tile");
@@ -54,24 +56,24 @@ public class Main : MonoBehaviour
                     direction = Vector3.right;
                 }
             }
-            bool onTiles = playfield.CheckingDistanceToTiles(player.player.position);
+            bool onTiles = playfield.CheckingDistanceToTiles(player.SetPosition());
             if (onTiles == false)
             {
                 RestartGame();
             }
-            bool collectedCrystal = playfield.CheckingDistanceToCrystals(player.player.position);
+            bool collectedCrystal = playfield.CheckingDistanceToCrystals(player.SetPosition());
             // if (collectedCrystal)
             // {
             //     uIController.AddOnePoint();
             // }
             player.Move(direction);
         }
-        playfield.DistanceСheck(player.player.position);
+        playfield.DistanceСheck(player.SetPosition());
     }
     void RestartGame()
     {
         direction = Vector3.forward;
-        player.player.position = startPosition * gameState.gameDifficulty;
+        player.GetPosition(startPosition * gameState.gameDifficulty);
         playfield.StartGame();
     }
 }
