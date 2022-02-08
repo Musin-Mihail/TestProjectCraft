@@ -1,34 +1,74 @@
 using UnityEngine;
 public class Main : MonoBehaviour
 {
+    enum Difficulty { Hard = 1, Normal = 2, Easy = 3 }
+    int gameDifficulty = (int)Difficulty.Hard;
     Player player;
     GameState gameState;
     Playfield playfield;
+    UIControler uIControler;
     Vector3 direction = Vector3.forward;
     Vector3 startPosition;
+    public bool move = false;
     void Start()
     {
         player = new Player();
         player.Initialization();
-        startPosition = player.SetPosition();
+        startPosition = player.GetPosition();
 
         gameState = new GameState();
 
         playfield = new Playfield();
         playfield.Initialization();
 
+        uIControler = new UIControler();
+        uIControler.Initialization();
+
         RestartGame();
+    }
+    public void ChangeDifficultyToEasy()
+    {
+        gameDifficulty = (int)Difficulty.Easy;
+        uIControler.ShowFirstText();
+        RestartGame();
+        move = false;
+    }
+    public void ChangeDifficultyToNormal()
+    {
+        gameDifficulty = (int)Difficulty.Normal;
+        uIControler.ShowFirstText();
+        RestartGame();
+        move = false;
+    }
+    public void ChangeDifficultyToHard()
+    {
+        gameDifficulty = (int)Difficulty.Hard;
+        uIControler.ShowFirstText();
+        RestartGame();
+        move = false;
+    }
+    public void OpenMenu()
+    {
+        move = false;
+        uIControler.ShowMenu();
     }
     void Update()
     {
-        if (gameState.move == false)
+        if (move == false)
         {
-            if (gameState.menu == false)
+            if (uIControler.menu == false)
             {
                 if (Input.GetMouseButtonUp(0))
                 {
-                    // uIController.StartGame();
-                    gameState.move = true;
+                    uIControler.HideUI();
+                    move = true;
+                }
+            }
+            else
+            {
+                if (Input.GetMouseButtonUp(0))
+                {
+                    uIControler.menu = false;
                 }
             }
         }
@@ -45,26 +85,26 @@ public class Main : MonoBehaviour
                     direction = Vector3.right;
                 }
             }
-            bool onTiles = playfield.CheckingDistanceToTiles(player.SetPosition());
+            bool onTiles = playfield.CheckingDistanceToTiles(player.GetPosition());
             if (onTiles == false)
             {
                 RestartGame();
             }
-            bool collectedCrystal = playfield.CheckingDistanceToCrystals(player.SetPosition());
+            bool collectedCrystal = playfield.CheckingDistanceToCrystals(player.GetPosition());
             // if (collectedCrystal)
             // {
             //     uIController.AddOnePoint();
             // }
             player.Move(direction);
         }
-        playfield.DistanceСheck(player.SetPosition());
+        playfield.AddNextTile(player.GetPosition());
     }
     void RestartGame()
     {
-        gameState.move = false;
+        uIControler.ShowFirstText();
+        move = false;
         direction = Vector3.forward;
-        player.GetPosition(startPosition * gameState.gameDifficulty);
-
-        playfield.StartGame(gameState.gameDifficulty);
+        player.SetPosition(startPosition * gameDifficulty);
+        playfield.StartGame(gameDifficulty);
     }
 }

@@ -5,7 +5,9 @@ public class Playfield
 {
     List<Vector3> startPositions = new List<Vector3>();
     public static int gameDifficulty;
-    public AddRemoveObject addRemoveObject;
+    AddRemoveObject addRemoveObject;
+    float maximumDistanceToTile;
+    float maximumDistanceToCrystal = 1.2f;
     public void Initialization()
     {
         addRemoveObject = new AddRemoveObject();
@@ -13,6 +15,7 @@ public class Playfield
     }
     public void StartGame(int gameDifficulty)
     {
+        maximumDistanceToTile = 0.72f * gameDifficulty;
         Playfield.gameDifficulty = gameDifficulty;
         addRemoveObject.layerSprite = 0;
         addRemoveObject.crystalCoefficient = 0;
@@ -76,15 +79,13 @@ public class Playfield
         }
         addRemoveObject.ChangeOrderSorting(addRemoveObject.visibleTiles[addRemoveObject.visibleTiles.Count - 1], 0);
     }
-
-
     public bool CheckingDistanceToTiles(Vector3 playerPosition)
     {
         foreach (var tile in addRemoveObject.poolTiles)
         {
             if (tile.gameObject.activeSelf)
             {
-                if (Vector3.Distance(tile.position, playerPosition) < 0.72f * gameDifficulty)
+                if (Vector3.Distance(tile.position, playerPosition) < maximumDistanceToTile)
                 {
                     return true;
                 }
@@ -98,7 +99,7 @@ public class Playfield
         {
             if (crystal.gameObject.activeSelf)
             {
-                if (Vector3.Distance(crystal.position, playerPosition) < 1.2f)
+                if (Vector3.Distance(crystal.position, playerPosition) < maximumDistanceToCrystal)
                 {
                     crystal.gameObject.SetActive(false);
                     return true;
@@ -107,7 +108,7 @@ public class Playfield
         }
         return false;
     }
-    public void DistanceСheck(Vector3 playerPosition)
+    public void AddNextTile(Vector3 playerPosition)
     {
         if (Vector3.Distance(addRemoveObject.visibleTiles[addRemoveObject.visibleTiles.Count - 1].position, playerPosition) < 10)
         {
@@ -180,7 +181,7 @@ public class AddRemoveObject
                 return;
             }
         }
-        Transform newTile = Create.CreateTile(vector);
+        Transform newTile = Create.InstantiateNewTile(vector);
         newTile.localScale = sizeTilse[Playfield.gameDifficulty - 1];
         poolTiles.Add(newTile);
         visibleTiles.Add(newTile);
@@ -234,7 +235,7 @@ public class AddRemoveObject
                     return;
                 }
             }
-            Transform newCrystal = Create.CreateCrystal(newVector);
+            Transform newCrystal = Create.InstantiateNewCrystal(newVector);
             poolСrystals.Add(newCrystal);
         }
         else
@@ -251,10 +252,11 @@ public class AddRemoveObject
     }
     public void CreateTile(Vector3 vector3)
     {
-        Transform newTile = Create.CreateTile(vector3);
+        Transform newTile = Create.InstantiateNewTile(vector3);
         newTile.localScale = sizeTilse[Playfield.gameDifficulty - 1];
         poolTiles.Add(newTile);
         visibleTiles.Add(newTile);
+        ChangeOrderSorting(newTile, layerSprite);
     }
 }
 public class Instantiate : MonoBehaviour
@@ -270,11 +272,11 @@ public class Instantiate : MonoBehaviour
         prefabcrystal = Resources.Load<Transform>("Crystal");
         parentCrystals = new GameObject().transform;
     }
-    public Transform CreateCrystal(Vector3 newVector)
+    public Transform InstantiateNewCrystal(Vector3 newVector)
     {
         return Instantiate(prefabcrystal, newVector + Vector3.up, prefabcrystal.rotation, parentCrystals);
     }
-    public Transform CreateTile(Vector3 newVector)
+    public Transform InstantiateNewTile(Vector3 newVector)
     {
         return Instantiate(prefabTile, newVector, prefabTile.rotation, parentTiles);
     }
