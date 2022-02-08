@@ -4,21 +4,16 @@ public class Main : MonoBehaviour
     enum Difficulty { Hard = 1, Normal = 2, Easy = 3 }
     int gameDifficulty = (int)Difficulty.Hard;
     Player player;
-    GameState gameState;
     Playfield playfield;
     UIControler uIControler;
     Vector3 direction = Vector3.forward;
-    Vector3 startPosition;
+    Vector3 startPlayerPosition;
     public bool move = false;
-    public bool test = false;
-
     void Start()
     {
         player = new Player();
         player.Initialization();
-        startPosition = player.GetPosition();
-
-        gameState = new GameState();
+        startPlayerPosition = player.GetPosition();
 
         playfield = new Playfield();
         playfield.Initialization();
@@ -27,31 +22,6 @@ public class Main : MonoBehaviour
         uIControler.Initialization();
 
         RestartGame();
-    }
-    public void ChangeDifficultyToEasy()
-    {
-        gameDifficulty = (int)Difficulty.Easy;
-        RestartGame();
-    }
-    public void ChangeDifficultyToNormal()
-    {
-        gameDifficulty = (int)Difficulty.Normal;
-        RestartGame();
-    }
-    public void ChangeDifficultyToHard()
-    {
-        gameDifficulty = (int)Difficulty.Hard;
-        RestartGame();
-    }
-    public void OpenMenu()
-    {
-        move = false;
-        uIControler.ShowMenu();
-    }
-    public void StartGame()
-    {
-        uIControler.HideFirstText();
-        move = true;
     }
     void Update()
     {
@@ -82,10 +52,35 @@ public class Main : MonoBehaviour
         }
         playfield.AddNextTile(player.GetPosition());
     }
+    public void ChangeDifficultyToEasy()
+    {
+        gameDifficulty = (int)Difficulty.Easy;
+        RestartGame();
+    }
+    public void ChangeDifficultyToNormal()
+    {
+        gameDifficulty = (int)Difficulty.Normal;
+        RestartGame();
+    }
+    public void ChangeDifficultyToHard()
+    {
+        gameDifficulty = (int)Difficulty.Hard;
+        RestartGame();
+    }
+    public void OpenMenu()
+    {
+        move = false;
+        uIControler.ShowMenu();
+    }
+    public void StartGame()
+    {
+        uIControler.HideFirstText();
+        move = true;
+    }
     void RestartGame()
     {
         direction = Vector3.forward;
-        player.SetPosition(startPosition * gameDifficulty);
+        player.SetPosition(startPlayerPosition * gameDifficulty);
         playfield.StartGame(gameDifficulty);
         uIControler.ShowFirstText();
         uIControler.HideMenu();

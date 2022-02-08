@@ -7,7 +7,6 @@ public class UIControler
     Transform buttonMenu;
     Text cristalsPointText;
     public int cristalsPoint = 0;
-    public bool menu = false;
     public void Initialization()
     {
         findTransform = new GameObject().AddComponent<FindTransform>();
@@ -25,12 +24,10 @@ public class UIControler
     }
     public void HideMenu()
     {
-        menu = false;
         buttonMenu.gameObject.SetActive(false);
     }
     public void ShowMenu()
     {
-        menu = true;
         buttonMenu.gameObject.SetActive(true);
     }
     public void AddOnePoint()
