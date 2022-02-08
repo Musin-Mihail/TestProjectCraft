@@ -1,11 +1,14 @@
 using UnityEngine;
-public class Player: MonoBehaviour
+public class Player
 {
     private Transform player;
-    float speed = 3;
+    private float speed = 3;
+    private GameObject GO;
     public void Initialization()
     {
-        player = FindObjectOfType<TagPlayer>().transform;
+        GO = new GameObject();
+        var find = GO.AddComponent<FindPlayer>();
+        player = find.Find();
     }
     public void Move(Vector3 direction)
     {
@@ -18,5 +21,12 @@ public class Player: MonoBehaviour
     public void GetPosition(Vector3 newPosition)
     {
         player.position = newPosition;
+    }
+}
+public class FindPlayer : MonoBehaviour
+{
+    public Transform Find()
+    {
+        return FindObjectOfType<TagPlayer>().transform;
     }
 }

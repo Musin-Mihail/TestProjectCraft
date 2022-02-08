@@ -1,8 +1,7 @@
-using UnityEngine;
-public class GameState : MonoBehaviour
+public class GameState
 {
     enum Difficulty { Hard = 1, Normal = 2, Easy = 3 }
-    [HideInInspector] public int gameDifficulty = (int)Difficulty.Easy;
+    public int gameDifficulty = (int)Difficulty.Easy;
     public bool move = false;
     public bool menu = false;
     public void ChangeDifficultyToEasy()

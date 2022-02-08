@@ -2,31 +2,20 @@ using UnityEngine;
 public class Main : MonoBehaviour
 {
     Player player;
-    Playfield2 playfield;
+    GameState gameState;
+    Playfield playfield;
     Vector3 direction = Vector3.forward;
-    public GameState gameState;
     Vector3 startPosition;
-    // UI ui;
     void Start()
     {
         player = new Player();
         player.Initialization();
         startPosition = player.SetPosition();
-        
-        gameState = GetComponent<GameState>();
-        playfield = GetComponent<Playfield>().ttt();
 
-        
-        // ui = new UI();
-        playfield.gameState = gameState;
-        playfield.prefabTile = Resources.Load<Transform>("Tile");
-        playfield.prefabcrystal = Resources.Load<Transform>("Crystal");
-        playfield.parentTiles = new GameObject().transform;
-        playfield.parentCrystals = new GameObject().transform;
-        playfield.sizeTilse.Add(new Vector3(1, 1, 1));
-        playfield.sizeTilse.Add(new Vector3(2, 2, 2));
-        playfield.sizeTilse.Add(new Vector3(3, 3, 3));
+        gameState = new GameState();
 
+        playfield = new Playfield();
+        playfield.Initialization();
 
         RestartGame();
     }
@@ -72,8 +61,10 @@ public class Main : MonoBehaviour
     }
     void RestartGame()
     {
+        gameState.move = false;
         direction = Vector3.forward;
         player.GetPosition(startPosition * gameState.gameDifficulty);
-        playfield.StartGame();
+
+        playfield.StartGame(gameState.gameDifficulty);
     }
 }
