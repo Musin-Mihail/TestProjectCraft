@@ -4,46 +4,33 @@ using UnityEngine;
 public class Playfield
 {
     List<Vector3> startPositions = new List<Vector3>();
-    protected List<Transform> poolTiles = new List<Transform>();
-    protected int layerSprite = 0;
-    protected List<Transform> visibleTiles = new List<Transform>();
-    public List<Vector3> sizeTilse = new List<Vector3>();
-    protected List<IEnumerator> IEnumerators = new List<IEnumerator>();
-    protected int crystalCoefficient;
-    protected List<Transform> poolСrystals = new List<Transform>();
     public static int gameDifficulty;
-    public Instantiate Create;
     public AddRemoveObject addRemoveObject;
     public void Initialization()
     {
-        sizeTilse.Add(new Vector3(1, 1, 1));
-        sizeTilse.Add(new Vector3(2, 2, 2));
-        sizeTilse.Add(new Vector3(3, 3, 3));
-        Create = new GameObject().AddComponent<Instantiate>();
-        Create.Initialization();
         addRemoveObject = new AddRemoveObject();
+        addRemoveObject.Initialization();
     }
     public void StartGame(int gameDifficulty)
     {
         Playfield.gameDifficulty = gameDifficulty;
-        layerSprite = 0;
-        crystalCoefficient = 0;
-        foreach (var tile in poolTiles)
+        addRemoveObject.layerSprite = 0;
+        addRemoveObject.crystalCoefficient = 0;
+        foreach (var tile in addRemoveObject.poolTiles)
         {
             tile.gameObject.SetActive(false);
-            ChangeOrderSorting(tile, 1);
+            addRemoveObject.ChangeOrderSorting(tile, 1);
         }
-        foreach (var item in IEnumerators)
+        foreach (var item in addRemoveObject.IEnumerators)
         {
-            var coroutine = new Coroutine();
-            coroutine.stopCoroutine(item);
+            addRemoveObject.coroutine.stopCoroutine(item);
         }
-        foreach (var crystal in poolСrystals)
+        foreach (var crystal in addRemoveObject.poolСrystals)
         {
             crystal.gameObject.SetActive(false);
         }
-        IEnumerators.Clear();
-        visibleTiles.Clear();
+        addRemoveObject.IEnumerators.Clear();
+        addRemoveObject.visibleTiles.Clear();
         CreateStartPosition();
         Generation();
     }
@@ -63,51 +50,37 @@ public class Playfield
     }
     void Generation()
     {
-        if (poolTiles.Count == 0)
+        if (addRemoveObject.poolTiles.Count == 0)
         {
             foreach (var vector3 in startPositions)
             {
-                CreateTile(vector3);
+                addRemoveObject.CreateTile(vector3);
             }
         }
         else
         {
             foreach (var vector3 in startPositions)
             {
-                foreach (var tile in poolTiles)
+                foreach (var tile in addRemoveObject.poolTiles)
                 {
                     if (tile.gameObject.activeSelf == false)
                     {
-                        tile.localScale = sizeTilse[gameDifficulty - 1];
+                        tile.localScale = addRemoveObject.sizeTilse[gameDifficulty - 1];
                         tile.gameObject.SetActive(true);
                         tile.position = vector3;
-                        visibleTiles.Add(tile);
+                        addRemoveObject.visibleTiles.Add(tile);
                         break;
                     }
                 }
             }
-
         }
-        ChangeOrderSorting(visibleTiles[visibleTiles.Count - 1], 0);
+        addRemoveObject.ChangeOrderSorting(addRemoveObject.visibleTiles[addRemoveObject.visibleTiles.Count - 1], 0);
     }
-    void CreateTile(Vector3 vector3)
-    {
 
-        Transform newTile = Create.CreateTile(vector3);
-        newTile.localScale = sizeTilse[gameDifficulty - 1];
-        poolTiles.Add(newTile);
-        visibleTiles.Add(newTile);
-    }
-    protected void ChangeOrderSorting(Transform tile, int layer)
-    {
-        for (int i = 0; i < tile.childCount; i++)
-        {
-            tile.GetChild(i).GetComponent<SpriteRenderer>().sortingOrder = layer;
-        }
-    }
+
     public bool CheckingDistanceToTiles(Vector3 playerPosition)
     {
-        foreach (var tile in poolTiles)
+        foreach (var tile in addRemoveObject.poolTiles)
         {
             if (tile.gameObject.activeSelf)
             {
@@ -121,7 +94,7 @@ public class Playfield
     }
     public bool CheckingDistanceToCrystals(Vector3 playerPosition)
     {
-        foreach (var crystal in poolСrystals)
+        foreach (var crystal in addRemoveObject.poolСrystals)
         {
             if (crystal.gameObject.activeSelf)
             {
@@ -136,20 +109,38 @@ public class Playfield
     }
     public void DistanceСheck(Vector3 playerPosition)
     {
-        if (Vector3.Distance(visibleTiles[visibleTiles.Count - 1].position, playerPosition) < 10)
+        if (Vector3.Distance(addRemoveObject.visibleTiles[addRemoveObject.visibleTiles.Count - 1].position, playerPosition) < 10)
         {
             addRemoveObject.AddTile();
-            if (visibleTiles.Count > 24 / gameDifficulty)
+            if (addRemoveObject.visibleTiles.Count > 24 / gameDifficulty)
             {
                 addRemoveObject.RemoveTile();
             }
         }
     }
 }
-public class AddRemoveObject : Playfield
+public class AddRemoveObject
 {
     Vector3 directionTile;
     int numberDirect;
+    public int layerSprite = 0;
+    public List<Transform> visibleTiles = new List<Transform>();
+    public List<Transform> poolTiles = new List<Transform>();
+    public List<Vector3> sizeTilse = new List<Vector3>();
+    public List<IEnumerator> IEnumerators = new List<IEnumerator>();
+    public Instantiate Create;
+    public int crystalCoefficient;
+    public List<Transform> poolСrystals = new List<Transform>();
+    public Coroutine coroutine;
+    public void Initialization()
+    {
+        Create = new GameObject().AddComponent<Instantiate>();
+        coroutine = new GameObject().AddComponent<Coroutine>();
+        Create.Initialization();
+        sizeTilse.Add(new Vector3(1, 1, 1));
+        sizeTilse.Add(new Vector3(2, 2, 2));
+        sizeTilse.Add(new Vector3(3, 3, 3));
+    }
     public void AddTile()
     {
         int randomTile = Random.Range(0, 100);
@@ -173,7 +164,6 @@ public class AddRemoveObject : Playfield
             directionTile = Vector3.right * Playfield.gameDifficulty;
             layerSprite++;
         }
-        Debug.Log(visibleTiles.Count);
         Vector3 vector = visibleTiles[visibleTiles.Count - 1].position + directionTile;
         foreach (var tile in poolTiles)
         {
@@ -185,19 +175,17 @@ public class AddRemoveObject : Playfield
                 tile.localScale = sizeTilse[Playfield.gameDifficulty - 1];
                 ChangeOrderSorting(tile, layerSprite);
                 var moveTile2 = MoveTileAdd(tile);
-                var coroutine2 = new Coroutine();
-                coroutine2.startCoroutine(moveTile2);
+                coroutine.startCoroutine(moveTile2);
                 IEnumerators.Add(moveTile2);
                 return;
             }
         }
         Transform newTile = Create.CreateTile(vector);
-        newTile.localScale = sizeTilse[gameDifficulty - 1];
+        newTile.localScale = sizeTilse[Playfield.gameDifficulty - 1];
         poolTiles.Add(newTile);
         visibleTiles.Add(newTile);
         ChangeOrderSorting(newTile, layerSprite);
         var moveTile = MoveTileAdd(newTile);
-        var coroutine = new Coroutine();
         coroutine.startCoroutine(moveTile);
         IEnumerators.Add(moveTile);
     }
@@ -216,7 +204,6 @@ public class AddRemoveObject : Playfield
     public void RemoveTile()
     {
         var moveTile = MoveTileRemove(visibleTiles[0]);
-        var coroutine = new Coroutine();
         coroutine.startCoroutine(moveTile);
         IEnumerators.Add(moveTile);
         visibleTiles.RemoveAt(0);
@@ -254,6 +241,20 @@ public class AddRemoveObject : Playfield
         {
             crystalCoefficient += 10;
         }
+    }
+    public void ChangeOrderSorting(Transform tile, int layer)
+    {
+        for (int i = 0; i < tile.childCount; i++)
+        {
+            tile.GetChild(i).GetComponent<SpriteRenderer>().sortingOrder = layer;
+        }
+    }
+    public void CreateTile(Vector3 vector3)
+    {
+        Transform newTile = Create.CreateTile(vector3);
+        newTile.localScale = sizeTilse[Playfield.gameDifficulty - 1];
+        poolTiles.Add(newTile);
+        visibleTiles.Add(newTile);
     }
 }
 public class Instantiate : MonoBehaviour
