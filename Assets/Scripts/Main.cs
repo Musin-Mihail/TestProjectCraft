@@ -10,6 +10,8 @@ public class Main : MonoBehaviour
     Vector3 direction = Vector3.forward;
     Vector3 startPosition;
     public bool move = false;
+    public bool test = false;
+
     void Start()
     {
         player = new Player();
@@ -29,52 +31,33 @@ public class Main : MonoBehaviour
     public void ChangeDifficultyToEasy()
     {
         gameDifficulty = (int)Difficulty.Easy;
-        uIControler.ShowFirstText();
         RestartGame();
-        move = false;
     }
     public void ChangeDifficultyToNormal()
     {
         gameDifficulty = (int)Difficulty.Normal;
-        uIControler.ShowFirstText();
         RestartGame();
-        move = false;
     }
     public void ChangeDifficultyToHard()
     {
         gameDifficulty = (int)Difficulty.Hard;
-        uIControler.ShowFirstText();
         RestartGame();
-        move = false;
     }
     public void OpenMenu()
     {
         move = false;
         uIControler.ShowMenu();
     }
+    public void StartGame()
+    {
+        uIControler.HideFirstText();
+        move = true;
+    }
     void Update()
     {
-        if (move == false)
+        if (move == true)
         {
-            if (uIControler.menu == false)
-            {
-                if (Input.GetMouseButtonUp(0))
-                {
-                    uIControler.HideUI();
-                    move = true;
-                }
-            }
-            else
-            {
-                if (Input.GetMouseButtonUp(0))
-                {
-                    uIControler.menu = false;
-                }
-            }
-        }
-        else
-        {
-            if (Input.GetMouseButtonUp(0))
+            if (Input.GetMouseButtonDown(0))
             {
                 if (direction == Vector3.right)
                 {
@@ -91,20 +74,22 @@ public class Main : MonoBehaviour
                 RestartGame();
             }
             bool collectedCrystal = playfield.CheckingDistanceToCrystals(player.GetPosition());
-            // if (collectedCrystal)
-            // {
-            //     uIController.AddOnePoint();
-            // }
+            if (collectedCrystal)
+            {
+                uIControler.AddOnePoint();
+            }
             player.Move(direction);
         }
         playfield.AddNextTile(player.GetPosition());
     }
     void RestartGame()
     {
-        uIControler.ShowFirstText();
-        move = false;
         direction = Vector3.forward;
         player.SetPosition(startPosition * gameDifficulty);
         playfield.StartGame(gameDifficulty);
+        uIControler.ShowFirstText();
+        uIControler.HideMenu();
+        uIControler.cristalsPoint = 0;
+        move = false;
     }
 }
