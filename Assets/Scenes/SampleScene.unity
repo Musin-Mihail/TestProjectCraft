@@ -1411,7 +1411,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   move: 0
-  test: 0
 --- !u!4 &1394307767
 Transform:
   m_ObjectHideFlags: 0

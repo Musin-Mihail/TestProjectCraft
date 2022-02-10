@@ -17,23 +17,7 @@ public class Playfield
     {
         maximumDistanceToTile = 0.72f * gameDifficulty;
         Playfield.gameDifficulty = gameDifficulty;
-        addRemoveObject.layerSprite = 0;
-        addRemoveObject.crystalCoefficient = 0;
-        foreach (var tile in addRemoveObject.poolTiles)
-        {
-            tile.gameObject.SetActive(false);
-            addRemoveObject.ChangeOrderSorting(tile, 1);
-        }
-        foreach (var item in addRemoveObject.IEnumerators)
-        {
-            addRemoveObject.coroutine.stopCoroutine(item);
-        }
-        foreach (var crystal in addRemoveObject.poolСrystals)
-        {
-            crystal.gameObject.SetActive(false);
-        }
-        addRemoveObject.IEnumerators.Clear();
-        addRemoveObject.visibleTiles.Clear();
+        addRemoveObject.StartGame(gameDifficulty);
         CreateStartPosition();
         Generation();
     }
@@ -133,6 +117,26 @@ public class AddRemoveObject
     public int crystalCoefficient;
     public List<Transform> poolСrystals = new List<Transform>();
     public Coroutine coroutine;
+    public void StartGame(int gameDifficulty)
+    {
+        layerSprite = 0;
+        crystalCoefficient = 0;
+        foreach (var tile in poolTiles)
+        {
+            tile.gameObject.SetActive(false);
+            ChangeOrderSorting(tile, 1);
+        }
+        foreach (var item in IEnumerators)
+        {
+            coroutine.stopCoroutine(item);
+        }
+        foreach (var crystal in poolСrystals)
+        {
+            crystal.gameObject.SetActive(false);
+        }
+        IEnumerators.Clear();
+        visibleTiles.Clear();
+    }
     public void Initialization()
     {
         Create = new GameObject().AddComponent<Instantiate>();

@@ -1,18 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI;
-public class UIControler
+public class UIControler : MonoBehaviour
 {
-    FindTransform findTransform;
-    Transform firstText;
-    Transform buttonMenu;
-    Text cristalsPointText;
+    protected Transform firstText;
+    protected Transform buttonMenu;
+    protected Text cristalsPointText;
     public int cristalsPoint = 0;
     public void Initialization()
     {
-        findTransform = new GameObject().AddComponent<FindTransform>();
-        firstText = findTransform.FindFirstText();
-        buttonMenu = findTransform.FindButtonMenu();
-        cristalsPointText = findTransform.FindCristalsPoint().GetComponent<Text>();
+        firstText = FindObjectOfType<TagFirstText>(true).transform;
+        buttonMenu = FindObjectOfType<TagButtonMenu>(true).transform;
+        cristalsPointText = FindObjectOfType<TagCristalsPoint>(true).transform.GetComponent<Text>();
     }
     public void HideFirstText()
     {
@@ -35,19 +33,9 @@ public class UIControler
         cristalsPoint++;
         cristalsPointText.text = cristalsPoint.ToString();
     }
-}
-public class FindTransform : MonoBehaviour
-{
-    public Transform FindFirstText()
+    public void Restart()
     {
-        return FindObjectOfType<TagFirstText>(true).transform;
-    }
-    public Transform FindButtonMenu()
-    {
-        return FindObjectOfType<TagButtonMenu>(true).transform;
-    }
-    public Transform FindCristalsPoint()
-    {
-        return FindObjectOfType<TagCristalsPoint>(true).transform;
+        cristalsPoint = 0;
+        cristalsPointText.text = cristalsPoint.ToString();
     }
 }

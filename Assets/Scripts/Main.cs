@@ -18,7 +18,7 @@ public class Main : MonoBehaviour
         playfield = new Playfield();
         playfield.Initialization();
 
-        uIControler = new UIControler();
+        uIControler = new GameObject().AddComponent<UIControler>();
         uIControler.Initialization();
 
         RestartGame();
@@ -84,7 +84,7 @@ public class Main : MonoBehaviour
         playfield.StartGame(gameDifficulty);
         uIControler.ShowFirstText();
         uIControler.HideMenu();
-        uIControler.cristalsPoint = 0;
+        uIControler.Restart();
         move = false;
     }
 }
